@@ -1,6 +1,7 @@
-export function validRegex(regexLine: string): boolean {
-	let regexExpression = new RegExp(
-		/^s\/[A-Za-z0-9 ]+\/[A-Za-z0-9 ]+\/(g?p?|p?g?)?$/
-	)
+//Function to validate the files extensions and the existence of the files
+export function validRegex(
+	regexLine: string,
+	regexExpression: RegExp
+): boolean {
 	return regexExpression.test(regexLine)
 }
