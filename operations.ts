@@ -1,8 +1,11 @@
+import { flags } from './sed'
+
 export function replaceLines(
 	line: string,
 	commands: string[],
-	nArg: boolean
+	nArg: flags
 ): string {
+	let newLine: string = ''
 	for (let command of commands) {
 		let originalWord: string = command.split('/')[1]
 		let newWord: string = command.split('/')[2]
@@ -11,18 +14,22 @@ export function replaceLines(
 			if (operationFlags.includes('g')) {
 				let onChange = new RegExp(originalWord, 'g')
 				line = line.replace(onChange, newWord)
-				//console.log(line)
 			} else {
 				line = line.replace(originalWord, newWord)
-				//console.log(line)
 			}
 			if (operationFlags.includes('p')) {
-				console.log(line)
+				if (nArg.i === undefined) {
+					console.log(line)
+				}
+				newLine = newLine + line + '\n'
 			}
 		}
 	}
-	if (!nArg) {
-		console.log(line)
+	if (!nArg.n) {
+		if (nArg.i === undefined) {
+			console.log(line)
+		}
+		newLine = newLine + line + '\n'
 	}
-	return line
+	return newLine
 }
