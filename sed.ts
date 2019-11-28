@@ -1,5 +1,5 @@
 import * as yargs from 'yargs'
-import { readFile } from './files'
+import { readFile, createCopyFile, writeFile } from './files'
 import { isString, isBoolean } from 'util'
 import { replaceLines } from './operations'
 import { validRegex } from './regex'
@@ -12,8 +12,6 @@ yargs
 	.describe('f', 'commands in file')
 	.nargs('e', 1)
 	.describe('e', 'Multiple commands').argv
-
-//console.log(yargs.argv)
 
 let txtFile: string = ''
 
@@ -42,22 +40,33 @@ if (yargs.argv.f || yargs.argv.e) {
 }
 
 let fileContent: string[] = readFile(txtFile)
-let newContent: string[] = []
-/*console.log(txtFile)
-console.log('..................')
-console.log(fileContent)
-console.log('..................')*/
+let newContent: string = ''
+
 for (let command of commandsList) {
 	if (!validRegex(command)) {
 		throw `The line ${command} is invalid`
 	}
 }
-for (let docLine of fileContent) {
-	docLine = replaceLines(docLine, commandsList, isBoolean(yargs.argv.n))
-	newContent.push(docLine)
+
+export interface flags {
+	n: boolean
+	i: boolean | string | undefined
 }
-//console.log(isBoolean(yargs.argv.n))
-/*
-console.log(fileContent)
-console.log('..................')
-console.log(newContent)*/
+
+let lineFlags = {
+	n: yargs.argv.n,
+	i: yargs.argv.i
+} as flags
+
+for (let docLine of fileContent) {
+	docLine = replaceLines(docLine, commandsList, lineFlags)
+	newContent = newContent + docLine
+}
+
+if (yargs.argv.i !== undefined) {
+	if (isString(yargs.argv.i)) {
+		// Create the new file
+		createCopyFile(txtFile, yargs.argv.i)
+	}
+	writeFile(txtFile, newContent)
+}
