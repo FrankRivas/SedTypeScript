@@ -1,38 +1,35 @@
 import * as fs from 'fs'
-type validator = [boolean, string]
 
+//Function to read the lines in files
 export function readFile(fileName: string): string[] {
-	let file: validator = validFile(fileName)
-	if (file[0]) {
-		let content: string[] = file[1].split('\n')
-		return content
-	} else {
-		throw 'Invalid File'
-	}
+	let file: string = validFile(fileName)
+	const content: string[] = file.split('\n')
+	return content
 }
 
-function validFile(fileName: string): validator {
+//Function to validate that a file exists
+function validFile(fileName: string): string {
 	try {
 		let str = fs.readFileSync(fileName, 'utf8')
-		return [true, str]
+		return str
 	} catch {
-		throw 'Invalid File'
+		throw `invalid File ${fileName}`
 	}
 }
 
-export function createCopyFile(fileToCopy: string, extension: string): string {
+//Function to create a copy of the file that is used
+export function createCopyFile(fileToCopy: string, extension: string): void {
 	try {
-		fs.copyFileSync(fileToCopy, `${fileToCopy}${extension}.txt`)
-		return 'The new file was created'
+		fs.copyFileSync(fileToCopy, `${fileToCopy}${extension}`)
 	} catch {
 		throw 'Error while creating the new file'
 	}
 }
 
-export function writeFile(fileToWrite: string, content: string): string {
+//Function to write the file used in those cases that the -i flag is specified
+export function writeFile(fileToWrite: string, content: string): void {
 	try {
 		fs.writeFileSync(fileToWrite, content, 'utf8')
-		return 'The content was included in the document'
 	} catch {
 		throw 'Error while writting the file'
 	}
